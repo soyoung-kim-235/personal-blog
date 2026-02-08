@@ -21,10 +21,7 @@ export default function Comments() {
     const category = process.env.NEXT_PUBLIC_GISCUS_CATEGORY;
     const categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID;
 
-    console.log("Giscus Config:", { repo, repoId, category, categoryId });
-
     if (!repo || !repoId || !category || !categoryId) {
-        console.warn("Giscus config missing");
         return null;
     }
 
