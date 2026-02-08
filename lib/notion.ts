@@ -3,7 +3,7 @@
  * - NOTION_API_KEY, NOTION_DATABASE_ID는 환경변수로만 설정 (코드에 하드코딩 금지)
  * - Status 속성이 'Public'인 글만 조회하여 블로그 목록/상세에 사용
  */
-import { Client,isFullPage, isFullBlock } from "@notionhq/client";
+import { Client, isFullPage, isFullBlock } from "@notionhq/client";
 import type {
   BlockObjectResponse,
   PageObjectResponse,
@@ -11,7 +11,7 @@ import type {
 
 import type { Post } from "./types";
 
-const CACHE_SECONDS = 60;
+
 
 function getClient(): Client {
   const apiKey = process.env.NOTION_API_KEY;
@@ -21,7 +21,15 @@ function getClient(): Client {
       "NOTION_API_KEY and NOTION_DATABASE_ID must be set in environment."
     );
   }
-  return new Client({ auth: apiKey });
+  return new Client({
+    auth: apiKey,
+    fetch: (url, opts) => {
+      return fetch(url, {
+        ...opts,
+        next: { revalidate: 3500 }, // 1시간(3600초)보다 조금 짧게 설정하여 만료 전에 갱신
+      });
+    },
+  });
 }
 
 function getDatabaseId(): string {
@@ -87,9 +95,7 @@ function parsePageToPost(page: PageObjectResponse): Post {
   };
 }
 
-const fetchOptions = {
-  next: { revalidate: CACHE_SECONDS } as const,
-};
+
 
 /**
  * Public 글 전체 조회 (최신순)

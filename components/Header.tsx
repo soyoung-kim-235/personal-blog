@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 const navItems = [
   { href: "/", label: "홈" },
   { href: "/posts", label: "전체 글" },
+  { href: "/portfolio", label: "포트폴리오" },
 ];
 
 interface HeaderProps {
@@ -58,9 +59,8 @@ export default function Header({ categories = [] }: HeaderProps) {
         </button>
 
         <nav
-          className={`absolute right-4 top-full mt-1 flex flex-col gap-1 rounded-lg border border-neutral-200 bg-white py-2 shadow-lg dark:border-neutral-700 dark:bg-neutral-900 md:static md:mt-0 md:flex-row md:gap-6 md:border-0 md:bg-transparent md:py-0 md:shadow-none ${
-            menuOpen ? "flex" : "hidden md:flex"
-          }`}
+          className={`absolute right-4 top-full mt-1 flex flex-col gap-1 rounded-lg border border-neutral-200 bg-white py-2 shadow-lg dark:border-neutral-700 dark:bg-neutral-900 md:static md:mt-0 md:flex-row md:gap-6 md:border-0 md:bg-transparent md:py-0 md:shadow-none ${menuOpen ? "flex" : "hidden md:flex"
+            }`}
         >
           {navItems.map(({ href, label }) => (
             <Link

@@ -7,6 +7,7 @@ import {
 } from "@/lib/notion";
 import { formatDate } from "@/lib/utils";
 import NotionRenderer from "@/components/NotionRenderer";
+import Comments from "@/components/Comments";
 import type { Metadata } from "next";
 
 export const revalidate = 60;
@@ -97,6 +98,7 @@ export default async function PostPage({ params }: Props) {
           </p>
         )}
       </div>
+      <Comments />
     </article>
   );
 }
