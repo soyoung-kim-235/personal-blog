@@ -3,13 +3,12 @@
  * - NOTION_API_KEY, NOTION_DATABASE_ID는 환경변수로만 설정 (코드에 하드코딩 금지)
  * - Status 속성이 'Public'인 글만 조회하여 블로그 목록/상세에 사용
  */
-import {
-  Client,
-  isFullPage,
-  isFullBlock,
-  type BlockObjectResponse,
-  type PageObjectResponse,
-} from "@notionhq/client";
+import { Client,isFullPage, isFullBlock } from "@notionhq/client";
+import type {
+  BlockObjectResponse,
+  PageObjectResponse,
+} from "@notionhq/client/build/src/api-endpoints";
+
 import type { Post } from "./types";
 
 const CACHE_SECONDS = 60;
