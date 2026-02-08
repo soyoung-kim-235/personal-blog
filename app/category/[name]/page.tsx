@@ -12,7 +12,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { name } = await params;
-  const decoded = decodeURIComponent(name);
+  const decoded = decodeURIComponent(name).normalize("NFC");
   return {
     title: `카테고리: ${decoded}`,
     description: `"${decoded}" 카테고리 글 목록`,
@@ -30,7 +30,7 @@ export async function generateStaticParams() {
 
 export default async function CategoryPage({ params }: Props) {
   const { name } = await params;
-  const categoryName = decodeURIComponent(name);
+  const categoryName = decodeURIComponent(name).normalize("NFC");
   const [posts, categories] = await Promise.all([
     getPostsByCategory(categoryName),
     getCategories(),

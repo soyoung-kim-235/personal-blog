@@ -44,7 +44,7 @@ function parsePageToPost(page: PageObjectResponse): Post {
   const getTitle = () => {
     const p = props.Title;
     if (p && "title" in p && Array.isArray(p.title) && p.title[0])
-      return (p.title[0] as { plain_text: string }).plain_text;
+      return (p.title[0] as { plain_text: string }).plain_text.normalize("NFC");
     return "";
   };
 
@@ -60,14 +60,14 @@ function parsePageToPost(page: PageObjectResponse): Post {
   const getSelect = (key: string) => {
     const p = props[key];
     if (p && "select" in p && (p as { select: { name: string } | null }).select)
-      return (p as { select: { name: string } }).select.name;
+      return (p as { select: { name: string } }).select.name.normalize("NFC");
     return "";
   };
 
   const getMultiSelect = (key: string): string[] => {
     const p = props[key];
     if (p && "multi_select" in p && Array.isArray((p as { multi_select: { name: string }[] }).multi_select))
-      return (p as { multi_select: { name: string }[] }).multi_select.map((x) => x.name);
+      return (p as { multi_select: { name: string }[] }).multi_select.map((x) => x.name.normalize("NFC"));
     return [];
   };
 
