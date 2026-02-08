@@ -211,18 +211,19 @@ export default function NotionRenderer({ blocks }: NotionRendererProps) {
       }
       case "callout": {
         const callout = block.callout;
-        const icon = callout?.icon?.emoji;
+        const icon =
+          callout?.icon?.type === "emoji"
+            ? callout.icon.emoji
+            : null;
+      
         nodes.push(
-          <div
-            key={block.id}
-            className="flex gap-3 rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-800/50"
-          >
-            {icon && <span className="text-lg">{icon}</span>}
-            <div className="flex-1">{renderRichText(richText)}</div>
+          <div key={block.id}>
+            {icon && <span>{icon}</span>}
+            ...
           </div>
         );
         break;
-      }
+      }      
       case "to_do": {
         const todo = block.to_do;
         const checked = todo?.checked ?? false;
