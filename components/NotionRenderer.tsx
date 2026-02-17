@@ -211,19 +211,39 @@ export default function NotionRenderer({ blocks }: NotionRendererProps) {
       }
       case "callout": {
         const callout = block.callout;
-        const icon =
-          callout?.icon?.type === "emoji"
-            ? callout.icon.emoji
-            : null;
-      
+        const icon = callout?.icon;
+        let iconEl = null;
+
+        if (icon?.type === "emoji") {
+          iconEl = <span className="text-xl">{icon.emoji}</span>;
+        } else if (icon?.type === "external" || icon?.type === "file") {
+          const src = icon.type === "external" ? icon.external.url : icon.file.url;
+          iconEl = (
+            <div className="relative h-6 w-6 overflow-hidden rounded-sm">
+              <Image
+                src={src}
+                alt="Icon"
+                fill
+                className="object-cover"
+                unoptimized={src.includes("notion")}
+              />
+            </div>
+          );
+        }
+
         nodes.push(
-          <div key={block.id}>
-            {icon && <span>{icon}</span>}
-            ...
+          <div
+            key={block.id}
+            className="my-4 flex items-start gap-4 rounded-xl bg-neutral-100 p-4 dark:bg-neutral-800"
+          >
+            {iconEl && <div className="shrink-0">{iconEl}</div>}
+            <div className="min-w-0 flex-1 leading-relaxed text-neutral-700 dark:text-neutral-300">
+              {renderRichText(callout.rich_text)}
+            </div>
           </div>
         );
         break;
-      }      
+      }
       case "to_do": {
         const todo = block.to_do;
         const checked = todo?.checked ?? false;
