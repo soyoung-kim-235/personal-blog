@@ -9,6 +9,8 @@ import { formatDate } from "@/lib/utils";
 import NotionRenderer from "@/components/NotionRenderer";
 import Comments from "@/components/Comments";
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
+import PasswordGate from "@/components/PasswordGate";
 
 export const revalidate = 60;
 
@@ -43,6 +45,26 @@ export default async function PostPage({ params }: Props) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) notFound();
+
+  // Password Protection
+  if (post.password) {
+    const cookieStore = cookies();
+    const hasAccess = cookieStore.get(`post-access-${slug}`)?.value === "true";
+
+    if (!hasAccess) {
+      return (
+        <article className="mx-auto max-w-3xl px-4 py-8">
+          <Link
+            href="/posts"
+            className="text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300"
+          >
+            ← 전체 글
+          </Link>
+          <PasswordGate slug={slug} title={post.title} />
+        </article>
+      );
+    }
+  }
 
   const blocks = await getPostBlocks(post.id);
 

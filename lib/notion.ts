@@ -90,6 +90,7 @@ function parsePageToPost(page: PageObjectResponse): Post {
     tags: getMultiSelect("Tags"),
     date: getDate("Date"),
     description: getRichText("Description") || null,
+    password: getRichText("Password") || undefined,
     createdAt: page.created_time,
     updatedAt: page.last_edited_time,
   };

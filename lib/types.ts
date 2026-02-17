@@ -13,6 +13,7 @@ export interface Post {
   content?: unknown;
   createdAt: string;
   updatedAt: string;
+  password?: string;
 }
 
 /**
