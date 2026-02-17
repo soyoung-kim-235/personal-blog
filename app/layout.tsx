@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getCategories } from "@/lib/notion";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const notoSansKr = Noto_Sans_KR({
   variable: "--font-sans",
@@ -41,11 +42,13 @@ export default async function RootLayout({
       <body
         className={`${notoSansKr.variable} ${jetbrainsMono.variable} font-sans antialiased min-h-screen flex flex-col`}
       >
-        <Header categories={categories} />
-        <main className="flex-1 mx-auto w-full max-w-4xl px-4 py-8">
-          {children}
-        </main>
-        <Footer />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Header categories={categories} />
+          <main className="flex-1 mx-auto w-full max-w-4xl px-4 py-8">
+            {children}
+          </main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );
