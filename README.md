@@ -96,4 +96,5 @@ components/
 
 MIT
 
-<!-- Jira Test: PB-7 -->
+echo "Jira 연동 테스트 PER-1 - $(date)" >> README.md
+
