@@ -71,6 +71,7 @@
 | **NB-20** | **방문자 분석** | 몇 명이 들어왔는지 확인 (Vercel Analytics 또는 GA4) | Story |
 | **NB-21** | **RSS 피드** | RSS 구독 지원 | Story |
 | **NB-23** | **보안 취약점 점검** | `npm audit` 경고 해결 | Task |
+| **NB-30** | **댓글 시스템 변경 (Disqus)** | GitHub 로그인 없이 댓글 달 수 있는 시스템 도입 | Story |
 ### 🐛 Issue (버그 수정)
 
 | ID | 제목 | 설명 | 상태 | 해결 방법 |
