@@ -26,7 +26,7 @@ function getClient(): Client {
     fetch: (url, opts) => {
       return fetch(url, {
         ...opts,
-        next: { revalidate: 3500 }, // 1시간(3600초)보다 조금 짧게 설정하여 만료 전에 갱신
+        next: { revalidate: 350 }, // 1분(360초)보다 조금 짧게 설정하여 만료 전에 갱신
       });
     },
   });
