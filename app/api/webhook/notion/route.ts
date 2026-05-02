@@ -62,6 +62,14 @@ async function handleRequest(req: Request) {
       });
     }
 
+    // [추가] 봇(AI)이 수정한 이벤트는 무시하여 무한 루프 방지
+    const authors = payload?.authors || [];
+    const isBot = authors.some((a: any) => a.type === "bot");
+    if (isBot) {
+      console.log(`[Webhook] Ignored: Event triggered by a bot.`);
+      return NextResponse.json({ status: "ignored", reason: "bot update" });
+    }
+
     const eventType = payload?.type;
     let pageId = null;
 
