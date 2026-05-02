@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getPosts } from "@/lib/notion";
 import PostCard from "@/components/PostCard";
 

@@ -57,7 +57,7 @@ export default async function PostPage({ params }: Props) {
 
   // Password Protection
   if (post.password) {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const hasAccess = cookieStore.get(`post-access-${slug}`)?.value === "true";
 
     if (!hasAccess) {

@@ -21,11 +21,8 @@ export async function verifyPostPassword(
         }
 
         if (post.password === passwordInput) {
-            // Set access cookie
-            // Name: post-access-{slug}
-            // Value: true
-            // Options: HttpOnly, Secure, SameSite, MaxAge (e.g., 1 day)
-            cookies().set(`post-access-${slug}`, "true", {
+            const cookieStore = await cookies();
+            cookieStore.set(`post-access-${slug}`, "true", {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "strict",

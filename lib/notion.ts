@@ -42,7 +42,7 @@ function parsePageToPost(page: PageObjectResponse): Post {
   const props = page.properties;
 
   const getTitle = () => {
-    const p = props.Title;
+    const p = props.Title || props.Name; // Title 또는 Name 속성 확인
     if (p && "title" in p && Array.isArray(p.title) && p.title[0])
       return (p.title[0] as { plain_text: string }).plain_text.normalize("NFC");
     return "";
@@ -110,21 +110,38 @@ export async function getPosts(): Promise<Post[]> {
   const notion = getClient();
   const databaseId = getDatabaseId();
 
-  const response = await notion.databases.query({
-    database_id: databaseId,
-    filter: {
-      property: "Status",
-      select: { equals: "Public" },
-    },
-    sorts: [{ property: "Date", direction: "descending" }],
-  });
+  console.log("Fetching posts from Notion DB:", databaseId);
 
-  const posts: Post[] = response.results
-    .filter((r): r is PageObjectResponse => "properties" in r && isFullPage(r))
-    .map(parsePageToPost)
-    .filter((p) => p.slug && p.title);
+  try {
+    const response = await notion.databases.query({
+      database_id: databaseId,
+      filter: {
+        property: "Status",
+        select: { equals: "Public" },
+      },
+      sorts: [{ property: "Date", direction: "descending" }],
+    });
 
-  return posts;
+    console.log(`Found ${response.results.length} raw results from Notion.`);
+
+    const posts: Post[] = response.results
+      .filter((r): r is PageObjectResponse => "properties" in r && isFullPage(r))
+      .map((page) => {
+        try {
+          return parsePageToPost(page);
+        } catch (err) {
+          console.error(`Error parsing page ${page.id}:`, err);
+          return null;
+        }
+      })
+      .filter((p): p is Post => p !== null && !!p.slug && !!p.title);
+
+    console.log(`Successfully parsed ${posts.length} public posts.`);
+    return posts;
+  } catch (error) {
+    console.error("Error fetching posts from Notion:", error);
+    throw error;
+  }
 }
 
 /**

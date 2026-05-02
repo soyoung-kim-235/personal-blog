@@ -29,7 +29,7 @@ export default function Error({
                 <div className="pt-4 space-x-4">
                     <button
                         onClick={() => reset()}
-                        className="inline-flex items-center justify-center rounded-full bg-neutral-900 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100"
+                        className="inline-flex items-center justify-center rounded-full bg-brand-accent px-6 py-3 text-sm font-bold uppercase tracking-widest text-white shadow-sm hover:bg-brand-accent-hover transition-colors"
                     >
                         다시 시도
                     </button>

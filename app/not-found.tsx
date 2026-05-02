@@ -16,7 +16,7 @@ export default function NotFound() {
                 <div className="pt-4">
                     <Link
                         href="/"
-                        className="inline-flex items-center justify-center rounded-full bg-neutral-900 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100"
+                        className="inline-flex items-center justify-center rounded-full bg-brand-accent px-6 py-3 text-sm font-bold uppercase tracking-widest text-white shadow-sm hover:bg-brand-accent-hover transition-colors"
                     >
                         홈으로 돌아가기
                     </Link>
