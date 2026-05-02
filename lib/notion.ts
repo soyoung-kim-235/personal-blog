@@ -117,6 +117,61 @@ export async function addCommentToPage(pageId: string, text: string) {
 }
 
 /**
+ * AI가 다듬은 텍스트를 페이지 최하단에 블록으로 쭉 이어서 추가
+ */
+export async function appendRefinedTextToPage(pageId: string, text: string) {
+  const notion = getClient();
+  
+  const blocks: any[] = [
+    { type: "divider", divider: {} },
+    {
+      type: "heading_2",
+      heading_2: {
+        rich_text: [{ text: { content: "✨ AI 수석 에디터의 본문 제안" } }],
+      },
+    },
+    {
+      type: "callout",
+      callout: {
+        rich_text: [{ text: { content: "아래는 초안을 바탕으로 문맥과 가독성을 다듬은 완성본입니다. 원본에 복사/붙여넣기하여 발행해 보세요. (발행 전 이 영역은 지워주세요)" } }],
+        icon: { type: "emoji", emoji: "🤖" },
+        color: "blue_background"
+      }
+    }
+  ];
+
+  // 줄바꿈 기준으로 문단 분리
+  const paragraphs = text.split("\n").map(p => p.trim()).filter(p => p.length > 0);
+  
+  for (const p of paragraphs) {
+    // 노션 API 텍스트 길이 제한(2000자) 대응
+    const chunks = p.match(/[\s\S]{1,2000}/g) || [];
+    for (const chunk of chunks) {
+      blocks.push({
+        type: "paragraph",
+        paragraph: {
+          rich_text: [{ text: { content: chunk } }]
+        }
+      });
+    }
+  }
+
+  try {
+    // 노션 API는 한 번에 최대 100개의 자식 블록만 추가 가능
+    const chunkSize = 100;
+    for (let i = 0; i < blocks.length; i += chunkSize) {
+      const chunk = blocks.slice(i, i + chunkSize);
+      await notion.blocks.children.append({
+        block_id: pageId,
+        children: chunk,
+      });
+    }
+  } catch (error) {
+    console.error(`Error appending refined text to page ${pageId}:`, error);
+  }
+}
+
+/**
  * ID로 단일 포스트 강제 조회 (Public, Private 무관)
  */
 export async function getPostById(pageId: string): Promise<Post | null> {

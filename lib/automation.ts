@@ -1,10 +1,11 @@
-import { getPosts, getPostById, getPostBlocks, updatePageProperties, addCommentToPage } from "@/lib/notion";
+import { getPosts, getPostById, getPostBlocks, updatePageProperties, addCommentToPage, appendRefinedTextToPage } from "@/lib/notion";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 interface AnalysisResult {
   tags: string[];
   description: string;
   feedback?: string;
+  refined_text?: string;
 }
 
 /**
@@ -36,20 +37,22 @@ async function analyzePostWithAI(title: string, blocks: any[]): Promise<Analysis
 당신은 기술 및 기획 블로그의 수석 에디터입니다.
 다음은 "${title}" 이라는 제목의 블로그 글 초안(Private 상태) 본문입니다.
 
-본문을 분석하여 다음 3가지를 JSON 형식으로만 응답해주세요.
+본문을 분석하여 다음 4가지를 JSON 형식으로만 응답해주세요.
 1. "description": 글의 내용을 가장 잘 요약하는 매력적이고 자연스러운 1~2문장의 소개글 (최대 160자, 독자의 호기심을 유발할 것)
 2. "tags": 글의 주제, 기술 스택, 핵심 키워드를 나타내는 태그 목록 (가장 핵심적인 3~5개만)
 3. "feedback": 글의 구성, 문맥, 가독성 등에 대한 에디터로서의 정성스러운 피드백과 개선 제안 (3~4문장)
+4. "refined_text": 사용자의 초안 내용을 바탕으로, 맞춤법/가독성/문맥을 프로페셔널하고 자연스럽게 완전히 다듬은 전체 완성본 텍스트 (단락 구분을 잘 할 것)
 
 [본문 시작]
 ${allText.slice(0, 20000)} // 긴 글은 앞부분 위주로 분석
 [본문 끝]
 
-반드시 아래와 같은 JSON 형식으로만 대답하세요. 다른 설명은 붙이지 마세요.
+반드시 아래와 JSON 형식으로만 대답하세요.
 {
-  "description": "요약문 내용...",
-  "tags": ["태그1", "태그2", "태그3"],
-  "feedback": "도입부가 매우 흥미롭습니다. 다만 중반부에 기술적인 설명이 다소 뭉쳐있어 문단을 나누면 가독성이 더 좋아질 것 같습니다. 결론부에..."
+  "description": "...",
+  "tags": ["..."],
+  "feedback": "...",
+  "refined_text": "..."
 }
 `;
 
@@ -63,7 +66,8 @@ ${allText.slice(0, 20000)} // 긴 글은 앞부분 위주로 분석
     return {
       description: parsed.description || "",
       tags: parsed.tags || [],
-      feedback: parsed.feedback || ""
+      feedback: parsed.feedback || "",
+      refined_text: parsed.refined_text || ""
     };
   } catch (error) {
     console.error("❌ AI 분석 중 오류:", error);
@@ -115,6 +119,12 @@ export async function processSinglePost(pageId: string) {
         const commentText = `🤖 Gemini 수석 에디터의 리뷰 도착!\n\n${aiResult.feedback}`;
         await addCommentToPage(post.id, commentText);
         console.log(`💬 [${post.title}] 노션 페이지에 AI 리뷰 댓글을 달았습니다.`);
+      }
+
+      // 💥 본문 전체를 다듬은 버전을 최하단에 쭉 나열해주기
+      if (aiResult.refined_text) {
+        await appendRefinedTextToPage(post.id, aiResult.refined_text);
+        console.log(`📝 [${post.title}] 노션 페이지 하단에 AI가 다듬은 본문을 추가했습니다.`);
       }
     }
   }
