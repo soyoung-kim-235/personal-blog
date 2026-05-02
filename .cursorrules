@@ -1,0 +1,24 @@
+# Notion Blog Rules
+
+## Stack
+- Next.js (App Router)
+- Tailwind CSS
+- Notion API (@notionhq/client)
+- TypeScript
+
+## Core Rules
+- **Imports**: Always use `@/` absolute paths for `components`, `lib`, and `app`.
+- **Naming**: Use PascalCase for component files and functions (e.g., `PostCard.tsx`).
+- **Styling**: Use Tailwind CSS utility classes. Follow the `brand-*` color tokens defined in `tailwind.config.ts`.
+- **Data**: Fetch data in Server Components by default. Use `lib/notion.ts` for API calls.
+- **Client Components**: Only use `"use client"` when interactivity (state, effects) is required.
+
+## Component Pattern
+- Use functional components with `export default`.
+- Define props using `interface` at the top of the file.
+- Prefer Tailwind for all styling needs.
+
+## Never
+- **No Hardcoding**: Never hardcode `NOTION_API_KEY` or `NOTION_DATABASE_ID`.
+- **No Relative Paths**: Avoid `../` when `@/` is available.
+- **No Inline Styles**: Use Tailwind classes instead of `style={{...}}` unless absolutely necessary for dynamic values.
