@@ -15,7 +15,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const decoded = decodeURIComponent(name).normalize("NFC");
   return {
     title: `카테고리: ${decoded}`,
-    description: `"${decoded}" 카테고리 글 목록`,
+    description: `"${decoded}" 카테고리에 등록된 모든 인사이트와 글 목록을 확인하세요.`,
+    openGraph: {
+      title: `카테고리: ${decoded} | Soyoung Kim`,
+      description: `"${decoded}" 카테고리 글 목록`,
+    },
+    twitter: {
+      title: `카테고리: ${decoded} | Soyoung Kim`,
+      description: `"${decoded}" 카테고리 글 목록`,
+    }
   };
 }
 

@@ -17,11 +17,40 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
+
 export const metadata: Metadata = {
-  title: { default: "블로그", template: "%s | 블로그" },
-  description: "Notion으로 관리하는 개인 블로그",
+  metadataBase: new URL(siteUrl),
+  title: { default: "Soyoung Kim | Product & Tech Blog", template: "%s | Soyoung Kim" },
+  description: "Notion을 CMS로 활용하는 Soyoung Kim의 기술 블로그입니다. 제품 기획과 개발에 관한 인사이트를 공유합니다.",
+  keywords: ["Notion Blog", "Next.js", "TypeScript", "Product Manager", "Developer", "Tech Insights"],
+  authors: [{ name: "Soyoung Kim" }],
+  creator: "Soyoung Kim",
   openGraph: {
     type: "website",
+    locale: "ko_KR",
+    url: siteUrl,
+    siteName: "Soyoung Kim Blog",
+    title: "Soyoung Kim | Product & Tech Blog",
+    description: "Notion을 CMS로 활용하는 Soyoung Kim의 기술 블로그입니다.",
+    images: [
+      {
+        url: "/og-image.png", // 나중에 이미지가 있으면 연결
+        width: 1200,
+        height: 630,
+        alt: "Soyoung Kim Blog",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Soyoung Kim | Product & Tech Blog",
+    description: "Notion을 CMS로 활용하는 Soyoung Kim의 기술 블로그입니다.",
+    creator: "@soyoung",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

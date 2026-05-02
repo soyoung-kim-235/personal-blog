@@ -31,12 +31,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return { title: "글을 찾을 수 없음" };
+  
+  const ogImage = post.cover ? [{ url: post.cover }] : [];
+
   return {
     title: post.title,
     description: post.description ?? undefined,
     openGraph: {
       title: post.title,
       description: post.description ?? undefined,
+      type: "article",
+      publishedTime: post.date,
+      images: ogImage,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.description ?? undefined,
+      images: ogImage,
     },
   };
 }
