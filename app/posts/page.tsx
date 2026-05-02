@@ -44,6 +44,7 @@ export default async function PostsPage() {
               category={post.category}
               slug={post.slug}
               tags={post.tags}
+              cover={post.cover}
             />
           ))
         )}

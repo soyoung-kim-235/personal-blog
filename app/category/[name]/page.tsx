@@ -72,6 +72,7 @@ export default async function CategoryPage({ params }: Props) {
               category={post.category}
               slug={post.slug}
               tags={post.tags}
+              cover={post.cover}
             />
           ))
         )}
