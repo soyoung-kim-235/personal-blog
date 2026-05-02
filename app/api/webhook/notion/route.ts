@@ -7,7 +7,7 @@ import crypto from "crypto";
 // 보안을 위해 노션 Integration 페이지에서 웹훅 시크릿을 발급받아 .env.local에 추가하세요.
 const NOTION_WEBHOOK_SECRET = process.env.NOTION_WEBHOOK_SECRET;
 
-export async function POST(req: Request) {
+async function handleRequest(req: Request) {
   try {
     const signature = req.headers.get("x-notion-signature");
     const bodyText = await req.text(); // raw body for signature verification
@@ -18,7 +18,6 @@ export async function POST(req: Request) {
       hmac.update(bodyText);
       const expectedSignature = hmac.digest("hex");
 
-      // timingSafeEqual를 사용해 안전하게 비교
       const isValid = crypto.timingSafeEqual(
         Buffer.from(`sha256=${expectedSignature}`),
         Buffer.from(signature)
@@ -33,20 +32,17 @@ export async function POST(req: Request) {
     const payload = JSON.parse(bodyText);
     
     // [중요] 노션 웹훅 구독 인증(Verification) 처리
-    // 노션에서 웹훅 URL을 처음 등록할 때 verification_token을 보냅니다.
     if (payload.verification_token) {
       console.log("==========================================");
       console.log("🔔 노션 웹훅 인증 토큰이 도착했습니다!");
       console.log(`🔑 토큰: ${payload.verification_token}`);
       console.log("==========================================");
       
-      // 토큰을 그대로 응답해줍니다. (노션 UI에 직접 입력해야 할 수도 있음)
       return NextResponse.json({ 
         verification_token: payload.verification_token 
       });
     }
 
-    // 노션 웹훅은 data.id (혹은 source.id 등 버전에 따라 다름)를 통해 페이지 ID를 전달합니다.
     const eventType = payload?.type;
     let pageId = null;
 
@@ -82,4 +78,23 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+}
+
+export async function POST(req: Request) {
+  return handleRequest(req);
+}
+
+export async function PUT(req: Request) {
+  return handleRequest(req);
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization, x-notion-signature",
+    },
+  });
 }
