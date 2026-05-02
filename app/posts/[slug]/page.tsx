@@ -56,7 +56,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 import FloatingSidebar from "@/components/FloatingSidebar";
+import RelatedPosts from "@/components/RelatedPosts";
 import Image from "next/image";
+import { getPostBySlug, getPostBlocks, getPosts, getRelatedPosts } from "@/lib/notion";
 
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
@@ -90,6 +92,7 @@ export default async function PostPage({ params }: Props) {
   }
 
   const blocks = await getPostBlocks(post.id);
+  const relatedPosts = await getRelatedPosts(post);
 
   // Extract headings for TOC
   const headings: TOCHeading[] = blocks
@@ -190,6 +193,9 @@ export default async function PostPage({ params }: Props) {
             </div>
           </aside>
         </div>
+
+        {/* Related Posts */}
+        <RelatedPosts posts={relatedPosts} />
       </div>
 
       {/* Sticky Bottom Nav */}

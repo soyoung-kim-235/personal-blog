@@ -222,6 +222,32 @@ export async function getPageIdBySlug(slug: string): Promise<string | null> {
 }
 
 /**
+ * 관련 글 조회 (동일 카테고리 또는 태그)
+ */
+export async function getRelatedPosts(currentPost: Post, limit = 3): Promise<Post[]> {
+  const allPosts = await getPosts();
+  
+  return allPosts
+    .filter(p => p.id !== currentPost.id) // 현재 글 제외
+    .map(p => {
+      let score = 0;
+      // 카테고리 일치 점수
+      p.category.forEach(c => {
+        if (currentPost.category.includes(c)) score += 2;
+      });
+      // 태그 일치 점수
+      p.tags.forEach(t => {
+        if (currentPost.tags.includes(t)) score += 1;
+      });
+      return { post: p, score };
+    })
+    .filter(item => item.score > 0) // 점수가 있는 것만
+    .sort((a, b) => b.score - a.score || new Date(b.post.date).getTime() - new Date(a.post.date).getTime()) // 점수순 -> 최신순
+    .slice(0, limit)
+    .map(item => item.post);
+}
+
+/**
  * Notion 페이지 속성 업데이트 (자동화용)
  */
 export async function updatePageProperties(
