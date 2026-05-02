@@ -66,12 +66,17 @@ async function handleRequest(req: Request) {
     let pageId = null;
 
     if (eventType?.startsWith("page.")) {
-      pageId = payload?.data?.id;
+      // Notion webhook payload structure varies slightly, but the ID is usually in data.id or data.object.id
+      pageId = payload?.data?.id || payload?.data?.object?.id || payload?.data?.page?.id;
+    } else if (eventType === "comment.created") {
+      // 코멘트 이벤트는 무시
+      return NextResponse.json({ status: "ignored", reason: "comment event" });
     } else {
       return NextResponse.json({ status: "ignored", reason: "not a page event" });
     }
 
     if (!pageId) {
+      console.error("[Webhook] No page ID found in payload:", JSON.stringify(payload));
       return NextResponse.json({ error: "No page ID found in payload" }, { status: 400 });
     }
 
