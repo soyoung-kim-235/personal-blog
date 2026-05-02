@@ -41,10 +41,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+import FloatingSidebar from "@/components/FloatingSidebar";
+import Image from "next/image";
+
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) notFound();
+
+  // Get all posts for bottom navigation (Prev/Next)
+  const allPosts = await getPosts();
+  const currentIndex = allPosts.findIndex((p) => p.slug === slug);
+  const prevPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
+  const nextPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
 
   // Password Protection
   if (post.password) {
@@ -53,12 +62,12 @@ export default async function PostPage({ params }: Props) {
 
     if (!hasAccess) {
       return (
-        <article className="mx-auto max-w-3xl px-4 py-8">
+        <article className="mx-auto max-w-3xl px-6 py-12">
           <Link
             href="/posts"
-            className="text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300"
+            className="text-sm font-bold text-neutral-400 hover:text-orange-600 transition-colors"
           >
-            ← 전체 글
+            ← BACK TO LIST
           </Link>
           <PasswordGate slug={slug} title={post.title} />
         </article>
@@ -69,58 +78,106 @@ export default async function PostPage({ params }: Props) {
   const blocks = await getPostBlocks(post.id);
 
   return (
-    <article>
-      <header className="mb-8">
-        <Link
-          href="/posts"
-          className="text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300"
-        >
-          ← 전체 글
-        </Link>
-        <h1 className="mt-2 text-3xl font-bold text-neutral-900 dark:text-white">
-          {post.title}
-        </h1>
-        {post.date && (
-          <time
-            dateTime={post.date}
-            className="mt-2 block text-sm text-neutral-500 dark:text-neutral-400"
-          >
-            {formatDate(post.date)}
-          </time>
+    <div className="relative pb-32">
+      <FloatingSidebar slug={slug} title={post.title} />
+      
+      {/* Editorial Hero Header */}
+      <header className="relative mb-20 flex min-h-[50vh] flex-col items-center justify-center overflow-hidden bg-brand-accent px-6 py-20 text-center">
+        {post.cover && (
+          <>
+            <Image
+              src={post.cover}
+              alt={post.title}
+              fill
+              className="object-cover opacity-40 transition-opacity duration-1000"
+              priority
+            />
+          </>
         )}
-        {(post.category.length > 0 || post.tags.length > 0) && (
-          <div className="mt-3 flex flex-wrap gap-2">
+        
+        <div className="relative z-10 mx-auto max-w-4xl">
+          <div className="mb-6 flex flex-wrap justify-center gap-3">
             {post.category.map((c) => (
-              <Link
+              <span
                 key={c}
-                href={`/category/${encodeURIComponent(c)}`}
-                className="rounded-md bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600"
+                className="rounded-full border border-brand-accent/20 bg-brand-bg px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-brand-accent"
               >
                 {c}
-              </Link>
-            ))}
-            {post.tags.map((t) => (
-              <span
-                key={t}
-                className="rounded-md bg-neutral-50 px-2 py-0.5 text-xs text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
-              >
-                {t}
               </span>
             ))}
           </div>
-        )}
+
+          <h1 className="text-balance text-4xl font-bold leading-[1.2] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            {post.title}
+          </h1>
+
+          <div className="mt-12 flex items-center justify-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/70">
+            <span>{formatDate(post.date)}</span>
+            <span className="h-1 w-1 rounded-full bg-brand-soft/50" />
+            <span className="text-brand-soft">SOYOUNG KIM</span>
+          </div>
+        </div>
       </header>
 
-      <div className="prose prose-neutral dark:prose-invert max-w-none">
-        {blocks.length > 0 ? (
-          <NotionRenderer blocks={blocks} />
-        ) : (
-          <p className="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 py-8 text-center text-neutral-500 dark:border-neutral-600 dark:bg-neutral-900/50 dark:text-neutral-400">
-            본문이 비어 있습니다. Notion에서 이 글 페이지를 열고, 컬럼이 아닌 <strong>페이지 안</strong>에 내용을 작성해 주세요.
-          </p>
+      <article className="mx-auto max-w-[720px] px-6">
+        {post.description && (
+          <section className="mb-20 border-y border-brand-border py-12">
+            <h2 className="mb-6 text-center text-[10px] font-black uppercase tracking-[0.3em] text-brand-accent">
+              Insight Summary
+            </h2>
+            <p className="text-center text-xl font-medium leading-relaxed text-brand-text/80">
+              {post.description}
+            </p>
+          </section>
         )}
-      </div>
-      <Comments />
-    </article>
+
+        <div className="prose prose-neutral prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-brand-accent prose-img:rounded-lg dark:prose-invert">
+          {blocks.length > 0 ? (
+            <NotionRenderer blocks={blocks} />
+          ) : (
+            <p className="rounded-lg border border-brand-border bg-brand-bg-sec py-16 text-center text-lg font-medium text-brand-text-sec">
+              본문이 비어 있습니다.
+            </p>
+          )}
+        </div>
+
+        <footer className="mt-24 border-t border-brand-border pt-12">
+          <Comments />
+        </footer>
+      </article>
+
+      {/* Sticky Bottom Nav */}
+      {(prevPost || nextPost) && (
+        <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-brand-border bg-brand-bg/90 py-5 backdrop-blur-xl transition-transform">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-6">
+            {prevPost ? (
+              <Link
+                href={`/posts/${prevPost.slug}`}
+                className="group flex flex-col items-start gap-1 max-w-[45%]"
+              >
+                <span className="text-[10px] font-black uppercase tracking-widest text-brand-accent">PREV</span>
+                <span className="line-clamp-1 text-sm font-bold text-brand-text transition-colors group-hover:text-brand-accent">
+                  {prevPost.title}
+                </span>
+              </Link>
+            ) : <div />}
+
+            <div className="hidden h-8 w-px bg-brand-border sm:block" />
+
+            {nextPost ? (
+              <Link
+                href={`/posts/${nextPost.slug}`}
+                className="group flex flex-col items-end gap-1 text-right max-w-[45%]"
+              >
+                <span className="text-[10px] font-black uppercase tracking-widest text-brand-accent">NEXT</span>
+                <span className="line-clamp-1 text-sm font-bold text-brand-text transition-colors group-hover:text-brand-accent">
+                  {nextPost.title}
+                </span>
+              </Link>
+            ) : <div />}
+          </div>
+        </nav>
+      )}
+    </div>
   );
 }

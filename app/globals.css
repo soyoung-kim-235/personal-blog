@@ -3,27 +3,39 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #171717;
-  --background: #fafafa;
+  /* Backgrounds */
+  --background-primary: #FFFFFF;
+  --background-secondary: #F8F9F3;
+  
+  /* Text */
+  --text-primary: #1A1A1A;
+  --text-secondary: #5C635B;
+  
+  /* Accents */
+  --accent-primary: #40513B;
+  --accent-hover: #609966;
+  --accent-soft: #EDF1D6;
+  
+  /* Neutrals */
+  --neutral-warm: #9DC08B;
+  --border-subtle: #E8EBE0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground: #fafafa;
-    --background: #0a0a0a;
-  }
+.dark {
+  --background-primary: #121411;
+  --background-secondary: #1A1D18;
+  --text-primary: #E2E8DF;
+  --text-secondary: #909C8E;
+  --accent-primary: #9DC08B;
+  --accent-hover: #B5D1A8;
+  --accent-soft: rgba(157, 192, 139, 0.1);
+  --neutral-warm: #40513B;
+  --border-subtle: #2A2E28;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-}
-
-@layer utilities {
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+@layer base {
+  body {
+    @apply bg-[var(--background-primary)] text-[var(--text-primary)] transition-colors duration-300;
+    font-feature-settings: "cv11", "ss01";
   }
 }

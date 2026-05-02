@@ -93,6 +93,11 @@ function parsePageToPost(page: PageObjectResponse): Post {
     password: getRichText("Password") || undefined,
     createdAt: page.created_time,
     updatedAt: page.last_edited_time,
+    cover: page.cover
+      ? page.cover.type === "external"
+        ? page.cover.external.url
+        : page.cover.file.url
+      : null,
   };
 }
 

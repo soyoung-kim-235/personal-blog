@@ -53,24 +53,67 @@ NOTION_DATABASE_ID=3016e63cef5e80ea912fd9cf391bf333`}
     );
   }
 
+  const featuredPost = posts[0];
+  const gridPosts = posts.slice(1);
+
   return (
-    <div>
-      <section className="mb-10">
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
-          최근 글
+    <div className="mx-auto max-w-6xl px-6 py-12">
+      {/* Featured Hero Post */}
+      {featuredPost && (
+        <section className="mb-24">
+          <Link
+            href={`/posts/${featuredPost.slug}`}
+            className="group relative block aspect-[21/9] w-full overflow-hidden rounded-lg bg-brand-bg-sec"
+          >
+            {featuredPost.cover && (
+              <>
+                <Image
+                  src={featuredPost.cover}
+                  alt={featuredPost.title}
+                  fill
+                  className="object-cover opacity-80 transition-transform duration-1000 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-bg/80 via-transparent to-transparent" />
+              </>
+            )}
+            <div className="absolute bottom-0 left-0 p-8 sm:p-12">
+              <div className="mb-4 flex gap-3">
+                {featuredPost.category.map((c) => (
+                  <span
+                    key={c}
+                    className="rounded-full bg-brand-accent px-4 py-1 text-[10px] font-black uppercase tracking-widest text-brand-bg"
+                  >
+                    {c}
+                  </span>
+                ))}
+              </div>
+              <h2 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight text-brand-text sm:text-5xl lg:text-6xl">
+                {featuredPost.title}
+              </h2>
+              <p className="mt-6 max-w-2xl text-lg font-medium leading-relaxed text-brand-text-sec line-clamp-2">
+                {featuredPost.description}
+              </p>
+            </div>
+          </Link>
+        </section>
+      )}
+
+      <section className="mb-16">
+        <h2 className="mb-4 text-[10px] font-black uppercase tracking-[0.3em] text-brand-accent">
+          Recent Stories
+        </h2>
+        <h1 className="text-4xl font-bold tracking-tight text-brand-text sm:text-5xl">
+          Latest <span className="text-brand-accent/50">Insights</span>
         </h1>
-        <p className="mt-1 text-neutral-600 dark:text-neutral-400">
-          Notion에서 관리하는 블로그입니다.
-        </p>
       </section>
 
-      <section className="grid gap-6 sm:grid-cols-1">
-        {posts.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 py-12 text-center text-neutral-500 dark:border-neutral-600 dark:bg-neutral-900/50 dark:text-neutral-400">
-            아직 등록된 글이 없습니다. Notion Database에 Public 글을 추가해 보세요.
+      <section className="grid gap-x-12 gap-y-20 sm:grid-cols-2 lg:grid-cols-3">
+        {gridPosts.length === 0 ? (
+          <p className="col-span-full rounded-2xl border border-brand-border bg-brand-bg-sec py-24 text-center text-lg font-medium text-brand-text-sec">
+            아직 다른 글이 없습니다.
           </p>
         ) : (
-          posts.map((post) => (
+          gridPosts.map((post) => (
             <PostCard
               key={post.id}
               title={post.title}
@@ -78,19 +121,32 @@ NOTION_DATABASE_ID=3016e63cef5e80ea912fd9cf391bf333`}
               date={post.date}
               category={post.category}
               slug={post.slug}
-              tags={post.tags}
+              cover={post.cover}
             />
           ))
         )}
       </section>
 
       {allPosts.length > 5 && (
-        <div className="mt-10 text-center">
+        <div className="mt-24 text-center">
           <Link
             href="/posts"
-            className="inline-flex items-center gap-2 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-200"
+            className="group inline-flex items-center gap-3 rounded-full bg-brand-accent px-10 py-4 text-sm font-black uppercase tracking-widest text-brand-bg transition-all hover:bg-brand-accent-hover"
           >
-            전체 보기 ({allPosts.length}개)
+            SEE ALL POSTS
+            <svg
+              className="h-4 w-4 transition-transform group-hover:translate-x-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
+            </svg>
           </Link>
         </div>
       )}

@@ -17,16 +17,16 @@ export default function CategoryFilter({
   if (categories.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-2 py-4">
       <Link
         href="/posts"
-        className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+        className={`rounded-full px-5 py-2 text-[10px] font-black uppercase tracking-widest transition-all ${
           !currentCategory
-            ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
-            : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+            ? "bg-brand-accent text-brand-bg shadow-lg shadow-brand-accent/20"
+            : "bg-brand-bg-sec text-brand-text-sec hover:bg-brand-warm/20"
         }`}
       >
-        전체
+        ALL
       </Link>
       {categories.map((c) => {
         const isActive =
@@ -35,10 +35,10 @@ export default function CategoryFilter({
           <Link
             key={c}
             href={`/category/${encodeURIComponent(c)}`}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+            className={`rounded-full px-5 py-2 text-[10px] font-black uppercase tracking-widest transition-all ${
               isActive
-                ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
-                : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                ? "bg-brand-accent text-brand-bg shadow-lg shadow-brand-accent/20"
+                : "bg-brand-bg-sec text-brand-text-sec hover:bg-brand-warm/20"
             }`}
           >
             {c}

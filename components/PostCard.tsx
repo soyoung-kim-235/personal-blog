@@ -2,52 +2,60 @@ import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import type { PostCardProps } from "@/lib/types";
 
+import Image from "next/image";
+
 export default function PostCard({
   title,
   description,
   date,
   category,
   slug,
-  tags = [],
+  cover,
 }: PostCardProps) {
   return (
-    <article className="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm transition hover:border-neutral-300 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-900 dark:hover:border-neutral-600">
-      <Link href={`/posts/${slug}`} className="block">
-        <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
-          {title}
-        </h2>
-        {date && (
-          <time
-            dateTime={date}
-            className="mt-1 block text-sm text-neutral-500 dark:text-neutral-400"
-          >
-            {formatDate(date)}
-          </time>
-        )}
-        {description && (
-          <p className="mt-2 line-clamp-2 text-sm text-neutral-600 dark:text-neutral-300">
-            {description}
-          </p>
+    <article className="group flex flex-col transition-all hover:-translate-y-1">
+      <Link href={`/posts/${slug}`} className="relative aspect-[16/10] overflow-hidden rounded-lg bg-brand-warm/20">
+        {cover ? (
+          <Image
+            src={cover}
+            alt={title}
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-4xl opacity-20">
+            📄
+          </div>
         )}
       </Link>
-      <div className="mt-3 flex flex-wrap gap-2">
-        {category.map((c) => (
-          <Link
-            key={c}
-            href={`/category/${encodeURIComponent(c)}`}
-            className="rounded-md bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600"
-          >
-            {c}
-          </Link>
-        ))}
-        {tags.slice(0, 3).map((t) => (
-          <span
-            key={t}
-            className="rounded-md bg-neutral-50 px-2 py-0.5 text-xs text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
-          >
-            {t}
-          </span>
-        ))}
+      
+      <div className="flex flex-1 flex-col py-6">
+        <div className="mb-3 flex flex-wrap gap-2">
+          {category.map((c) => (
+            <span
+              key={c}
+              className="rounded-full bg-brand-soft px-3 py-1 text-[9px] font-black uppercase tracking-widest text-brand-accent"
+            >
+              {c}
+            </span>
+          ))}
+        </div>
+        
+        <Link href={`/posts/${slug}`}>
+          <h2 className="mb-3 line-clamp-2 text-xl font-bold leading-tight tracking-tight text-brand-text transition-colors group-hover:text-brand-accent">
+            {title}
+          </h2>
+        </Link>
+        
+        <p className="mb-6 line-clamp-2 text-sm leading-relaxed text-brand-text-sec">
+          {description}
+        </p>
+        
+        <div className="mt-auto flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-brand-text-sec/60">
+          <time dateTime={date}>{formatDate(date)}</time>
+          <span>•</span>
+          <span>Article</span>
+        </div>
       </div>
     </article>
   );

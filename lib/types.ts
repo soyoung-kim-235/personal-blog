@@ -14,6 +14,7 @@ export interface Post {
   createdAt: string;
   updatedAt: string;
   password?: string;
+  cover: string | null;
 }
 
 /**
@@ -26,6 +27,7 @@ export interface PostCardProps {
   category: string[];
   slug: string;
   tags?: string[];
+  cover: string | null;
 }
 
 /**

@@ -38,13 +38,13 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <body
         className={`${notoSansKr.variable} ${jetbrainsMono.variable} font-sans antialiased min-h-screen flex flex-col`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Header categories={categories} />
-          <main className="flex-1 mx-auto w-full max-w-4xl px-4 py-8">
+          <main className="flex-1 mx-auto w-full max-w-6xl px-6 py-12">
             {children}
           </main>
           <Footer />
