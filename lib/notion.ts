@@ -280,19 +280,25 @@ export async function getPostBlocks(pageId: string): Promise<BlockObjectResponse
   const blocks: BlockObjectResponse[] = [];
   let cursor: string | undefined;
 
-  do {
-    const response = await notion.blocks.children.list({
-      block_id: pageId,
-      page_size: 100,
-      start_cursor: cursor,
-    });
+  try {
+    do {
+      const response = await notion.blocks.children.list({
+        block_id: pageId,
+        page_size: 100,
+        start_cursor: cursor,
+      });
 
-    const pageBlocks = response.results.filter(
-      (b): b is BlockObjectResponse => isFullBlock(b)
-    );
-    blocks.push(...pageBlocks);
-    cursor = response.next_cursor ?? undefined;
-  } while (cursor);
+      const pageBlocks = response.results.filter(
+        (b): b is BlockObjectResponse => isFullBlock(b)
+      );
+      blocks.push(...pageBlocks);
+      cursor = response.next_cursor ?? undefined;
+    } while (cursor);
+  } catch (error: any) {
+    // 템플릿 페이지 등 블록 접근이 불가능한 경우 에러를 무시하고 빈 배열 반환
+    console.warn(`[Warning] Could not retrieve blocks for page ${pageId}: ${error.message}`);
+    return [];
+  }
 
   return blocks;
 }
