@@ -10,7 +10,6 @@ export interface Post {
   tags: string[];
   date: string;
   description: string | null;
-  content?: unknown;
   createdAt: string;
   updatedAt: string;
   password?: string;
