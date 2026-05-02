@@ -17,18 +17,19 @@ export default function Icon() {
             // ImageResponse JSX element
             <div
                 style={{
-                    fontSize: 24,
-                    background: "black", // Neutral-900 like
+                    fontSize: 22,
+                    background: "#40513B", // brand-accent
                     width: "100%",
                     height: "100%",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     color: "white",
-                    borderRadius: "6px",
+                    borderRadius: "8px",
+                    fontWeight: "bold",
                 }}
             >
-                B
+                S
             </div>
         ),
         // ImageResponse options

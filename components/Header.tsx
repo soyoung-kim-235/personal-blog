@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import ThemeToggle from "./ThemeToggle";
+import Search from "./Search";
 
 const navItems = [
   { href: "/", label: "홈" },
@@ -44,11 +45,13 @@ export default function Header({ categories = [] }: HeaderProps) {
             ))}
           </nav>
           <div className="h-4 w-px bg-brand-border" />
+          <Search />
           <ThemeToggle />
         </div>
 
         {/* Mobile Menu Button */}
         <div className="flex items-center gap-4 md:hidden">
+          <Search />
           <ThemeToggle />
           <button
             type="button"
