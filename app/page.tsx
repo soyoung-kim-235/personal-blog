@@ -99,18 +99,18 @@ NOTION_DATABASE_ID=3016e63cef5e80ea912fd9cf391bf333`}
         </section>
       )}
 
-      <section className="mb-16">
-        <h2 className="mb-4 text-[10px] font-black uppercase tracking-[0.3em] text-brand-accent">
-          Recent Stories
+      <section className="mb-12 mt-20">
+        <h2 className="mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-brand-accent">
+          Latest Insights
         </h2>
-        <h1 className="text-4xl font-bold tracking-tight text-brand-text sm:text-5xl">
-          Latest <span className="text-brand-accent/50">Insights</span>
-        </h1>
+        <h3 className="text-3xl font-bold tracking-tight text-brand-text sm:text-4xl">
+          새로운 생각들
+        </h3>
       </section>
 
-      <section className="grid gap-x-12 gap-y-20 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="flex flex-col gap-4">
         {gridPosts.length === 0 ? (
-          <p className="col-span-full rounded-2xl border border-brand-border bg-brand-bg-sec py-24 text-center text-lg font-medium text-brand-text-sec">
+          <p className="rounded-2xl border border-brand-border bg-brand-bg-sec py-24 text-center text-lg font-medium text-brand-text-sec">
             아직 다른 글이 없습니다.
           </p>
         ) : (
@@ -129,25 +129,13 @@ NOTION_DATABASE_ID=3016e63cef5e80ea912fd9cf391bf333`}
       </section>
 
       {allPosts.length > 5 && (
-        <div className="mt-24 text-center">
+        <div className="mt-16 border-t border-brand-border pt-12 text-center">
           <Link
             href="/posts"
-            className="group inline-flex items-center gap-3 rounded-full bg-brand-accent px-10 py-4 text-sm font-black uppercase tracking-widest text-brand-bg transition-all hover:bg-brand-accent-hover"
+            className="group inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-brand-accent transition-all hover:gap-4"
           >
-            SEE ALL POSTS
-            <svg
-              className="h-4 w-4 transition-transform group-hover:translate-x-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2.5}
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
+            VIEW ALL POSTS
+            <span className="transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </div>
       )}

@@ -29,7 +29,7 @@ export default async function PostsPage() {
         <CategoryFilter categories={categories} currentCategory={null} />
       </div>
 
-      <section className="mt-8 grid gap-6 sm:grid-cols-1">
+      <section className="mt-12 flex flex-col gap-4">
         {posts.length === 0 ? (
           <p className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 py-12 text-center text-neutral-500 dark:border-neutral-600 dark:bg-neutral-900/50 dark:text-neutral-400">
             아직 등록된 글이 없습니다.

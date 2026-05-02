@@ -118,42 +118,40 @@ export default async function PostPage({ params }: Props) {
     <div className="relative pb-32">
       <FloatingSidebar slug={slug} title={post.title} />
       
-      {/* Editorial Hero Header */}
-      <header className="relative mb-20 flex min-h-[50vh] flex-col items-center justify-center overflow-hidden bg-brand-accent px-6 py-20 text-center">
+      {/* Text-Centric Minimal Header */}
+      <header className="mx-auto max-w-4xl px-6 pt-24 mb-16 text-center">
+        <div className="mb-8 flex flex-wrap justify-center gap-3">
+          {post.category.map((c) => (
+            <span
+              key={c}
+              className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-accent"
+            >
+              {c}
+            </span>
+          ))}
+        </div>
+
+        <h1 className="text-balance text-4xl font-bold leading-[1.1] tracking-tight text-brand-text sm:text-6xl lg:text-7xl">
+          {post.title}
+        </h1>
+
+        <div className="mt-12 flex items-center justify-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-brand-text-sec">
+          <span>{formatDate(post.date)}</span>
+          <span className="h-1 w-1 rounded-full bg-brand-border" />
+          <span className="text-brand-accent">SOYOUNG KIM</span>
+        </div>
+
         {post.cover && (
-          <>
+          <div className="mt-16 relative aspect-[21/9] w-full overflow-hidden rounded-2xl bg-brand-bg-sec">
             <Image
               src={post.cover}
               alt={post.title}
               fill
-              className="object-cover opacity-40 transition-opacity duration-1000"
+              className="object-cover"
               priority
             />
-          </>
+          </div>
         )}
-        
-        <div className="relative z-10 mx-auto max-w-4xl">
-          <div className="mb-6 flex flex-wrap justify-center gap-3">
-            {post.category.map((c) => (
-              <span
-                key={c}
-                className="rounded-full border border-brand-accent/20 bg-brand-bg px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-brand-accent"
-              >
-                {c}
-              </span>
-            ))}
-          </div>
-
-          <h1 className="text-balance text-4xl font-bold leading-[1.2] tracking-tight text-white sm:text-6xl lg:text-7xl">
-            {post.title}
-          </h1>
-
-          <div className="mt-12 flex items-center justify-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/70">
-            <span>{formatDate(post.date)}</span>
-            <span className="h-1 w-1 rounded-full bg-brand-soft/50" />
-            <span className="text-brand-soft">SOYOUNG KIM</span>
-          </div>
-        </div>
       </header>
 
       <div className="mx-auto max-w-6xl px-6">

@@ -13,49 +13,36 @@ export default function PostCard({
   cover,
 }: PostCardProps) {
   return (
-    <article className="group flex flex-col transition-all hover:-translate-y-1">
-      <Link href={`/posts/${slug}`} className="relative aspect-[16/10] overflow-hidden rounded-lg bg-brand-warm/20">
-        {cover ? (
-          <Image
-            src={cover}
-            alt={title}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-4xl opacity-20">
-            📄
+    <article className="group relative border-b border-brand-border pb-12 last:border-0">
+      <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+        <div className="flex-1 order-2 md:order-1">
+          <div className="mb-3 flex items-center gap-3 text-[10px] font-black uppercase tracking-widest">
+            <span className="text-brand-accent">{category[0]}</span>
+            <span className="h-1 w-1 rounded-full bg-brand-border" />
+            <span className="text-brand-text-sec">{formatDate(date)}</span>
           </div>
+          
+          <Link href={`/posts/${slug}`} className="block group">
+            <h2 className="text-2xl font-bold leading-tight tracking-tight text-brand-text transition-colors group-hover:text-brand-accent md:text-3xl">
+              {title}
+            </h2>
+            <p className="mt-4 line-clamp-2 text-lg leading-relaxed text-brand-text-sec/70">
+              {description}
+            </p>
+          </Link>
+        </div>
+
+        {cover && (
+          <Link href={`/posts/${slug}`} className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-brand-bg-sec order-1 md:order-2 md:w-48 md:shrink-0 lg:w-56">
+            <Image
+              src={cover}
+              alt={title}
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, 256px"
+            />
+          </Link>
         )}
-      </Link>
-      
-      <div className="flex flex-1 flex-col py-6">
-        <div className="mb-3 flex flex-wrap gap-2">
-          {category.map((c) => (
-            <span
-              key={c}
-              className="rounded-full bg-brand-soft px-3 py-1 text-[9px] font-black uppercase tracking-widest text-brand-accent"
-            >
-              {c}
-            </span>
-          ))}
-        </div>
-        
-        <Link href={`/posts/${slug}`}>
-          <h2 className="mb-3 line-clamp-2 text-xl font-bold leading-tight tracking-tight text-brand-text transition-colors group-hover:text-brand-accent">
-            {title}
-          </h2>
-        </Link>
-        
-        <p className="mb-6 line-clamp-2 text-sm leading-relaxed text-brand-text-sec">
-          {description}
-        </p>
-        
-        <div className="mt-auto flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-brand-text-sec/60">
-          <time dateTime={date}>{formatDate(date)}</time>
-          <span>•</span>
-          <span>Article</span>
-        </div>
       </div>
     </article>
   );
