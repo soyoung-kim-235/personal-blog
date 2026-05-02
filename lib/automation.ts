@@ -29,6 +29,23 @@ function extractTags(title: string, blocks: any[]): string[] {
 }
 
 /**
+ * 본문에서 요약문 추출 (TL;DR 생성)
+ */
+function extractDescription(blocks: any[]): string {
+  // 첫 번째 단락(paragraph)이나 콜아웃(callout) 내용을 우선적으로 찾음
+  const firstParagraph = blocks.find(b => b.type === "paragraph" || b.type === "callout");
+  if (!firstParagraph) return "";
+
+  const type = firstParagraph.type;
+  const content = firstParagraph[type];
+  const text = "rich_text" in content 
+    ? content.rich_text.map((rt: any) => rt.plain_text).join(" ") 
+    : "";
+
+  return text.slice(0, 160).trim() + (text.length > 160 ? "..." : "");
+}
+
+/**
  * 제목 기반 Slug 생성
  */
 function generateSlug(title: string): string {
@@ -59,18 +76,30 @@ export async function runAutomation() {
          // 우선 post 객체에 slug가 기본 생성된 값인지 확인
       }
 
-      // 2. Tags가 비어있는 경우
+      // 2. Tags 및 Description이 비어있는 경우
       const hasNoTags = !post.tags || post.tags.length === 0;
+      const hasNoDescription = !post.description;
       
-      if (hasNoTags) {
-        console.log(`📝 [${post.title}] 태그 분석 중...`);
+      if (hasNoTags || hasNoDescription) {
+        console.log(`📝 [${post.title}] 콘텐츠 분석 중...`);
         const blocks = await getPostBlocks(post.id);
-        const recommendedTags = extractTags(post.title, blocks);
         
-        if (recommendedTags.length > 0) {
-          updates["Tags"] = {
-            multi_select: recommendedTags.map(tag => ({ name: tag }))
-          };
+        if (hasNoTags) {
+          const recommendedTags = extractTags(post.title, blocks);
+          if (recommendedTags.length > 0) {
+            updates["Tags"] = {
+              multi_select: recommendedTags.map(tag => ({ name: tag }))
+            };
+          }
+        }
+
+        if (hasNoDescription) {
+          const summary = extractDescription(blocks);
+          if (summary) {
+            updates["Description"] = {
+              rich_text: [{ text: { content: summary } }]
+            };
+          }
         }
       }
 
