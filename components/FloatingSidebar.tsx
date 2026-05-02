@@ -35,7 +35,7 @@ export default function FloatingSidebar({ slug, title }: FloatingSidebarProps) {
     <div className="fixed left-[calc(50%-480px)] top-40 hidden flex-col items-center gap-4 xl:flex">
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className="flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-400 shadow-sm transition-all hover:border-orange-600 hover:text-orange-600 dark:border-neutral-800 dark:bg-neutral-900"
+        className="flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-400 shadow-sm transition-all hover:border-brand-accent hover:text-brand-accent dark:border-neutral-800 dark:bg-neutral-900"
         title="맨 위로"
       >
         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -45,7 +45,7 @@ export default function FloatingSidebar({ slug, title }: FloatingSidebarProps) {
       
       <button
         onClick={handleShare}
-        className="flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-400 shadow-sm transition-all hover:border-orange-600 hover:text-orange-600 dark:border-neutral-800 dark:bg-neutral-900"
+        className="flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-400 shadow-sm transition-all hover:border-brand-accent hover:text-brand-accent dark:border-neutral-800 dark:bg-neutral-900"
         title="공유하기"
       >
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -57,7 +57,7 @@ export default function FloatingSidebar({ slug, title }: FloatingSidebarProps) {
 
       <Link
         href="/posts"
-        className="flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-400 shadow-sm transition-all hover:border-orange-600 hover:text-orange-600 dark:border-neutral-800 dark:bg-neutral-900"
+        className="flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-400 shadow-sm transition-all hover:border-brand-accent hover:text-brand-accent dark:border-neutral-800 dark:bg-neutral-900"
         title="목록으로"
       >
         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

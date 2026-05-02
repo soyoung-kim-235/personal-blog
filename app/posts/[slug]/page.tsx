@@ -11,6 +11,8 @@ import Comments from "@/components/Comments";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import PasswordGate from "@/components/PasswordGate";
+import TableOfContents, { TOCHeading } from "@/components/TableOfContents";
+import type { BlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
 export const revalidate = 60;
 
@@ -89,6 +91,26 @@ export default async function PostPage({ params }: Props) {
 
   const blocks = await getPostBlocks(post.id);
 
+  // Extract headings for TOC
+  const headings: TOCHeading[] = blocks
+    .filter((b) => ["heading_1", "heading_2", "heading_3"].includes(b.type))
+    .map((b) => {
+      const type = b.type as "heading_1" | "heading_2" | "heading_3";
+      const content = b[type];
+      const text =
+        "rich_text" in content
+          ? content.rich_text.map((rt: any) => rt.plain_text).join("")
+          : "";
+      return {
+        id: text
+          .toLowerCase()
+          .replace(/[^\w\sㄱ-힣]/g, "")
+          .replace(/\s+/g, "-"),
+        text,
+        level: parseInt(type.split("_")[1]),
+      };
+    });
+
   return (
     <div className="relative pb-32">
       <FloatingSidebar slug={slug} title={post.title} />
@@ -131,32 +153,44 @@ export default async function PostPage({ params }: Props) {
         </div>
       </header>
 
-      <article className="mx-auto max-w-[720px] px-6">
-        {post.description && (
-          <section className="mb-20 border-y border-brand-border py-12">
-            <h2 className="mb-6 text-center text-[10px] font-black uppercase tracking-[0.3em] text-brand-accent">
-              Insight Summary
-            </h2>
-            <p className="text-center text-xl font-medium leading-relaxed text-brand-text/80">
-              {post.description}
-            </p>
-          </section>
-        )}
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="flex flex-col gap-12 lg:flex-row">
+          {/* Main Content */}
+          <article className="flex-1 max-w-[720px]">
+            {post.description && (
+              <section className="mb-20 border-y border-brand-border py-12">
+                <h2 className="mb-6 text-center text-[10px] font-black uppercase tracking-[0.3em] text-brand-accent">
+                  Insight Summary
+                </h2>
+                <p className="text-center text-xl font-medium leading-relaxed text-brand-text/80">
+                  {post.description}
+                </p>
+              </section>
+            )}
 
-        <div className="prose prose-neutral prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-brand-accent prose-img:rounded-lg dark:prose-invert">
-          {blocks.length > 0 ? (
-            <NotionRenderer blocks={blocks} />
-          ) : (
-            <p className="rounded-lg border border-brand-border bg-brand-bg-sec py-16 text-center text-lg font-medium text-brand-text-sec">
-              본문이 비어 있습니다.
-            </p>
-          )}
+            <div className="prose prose-neutral prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-brand-accent prose-img:rounded-lg dark:prose-invert">
+              {blocks.length > 0 ? (
+                <NotionRenderer blocks={blocks} />
+              ) : (
+                <p className="rounded-lg border border-brand-border bg-brand-bg-sec py-16 text-center text-lg font-medium text-brand-text-sec">
+                  본문이 비어 있습니다.
+                </p>
+              )}
+            </div>
+
+            <footer className="mt-24 border-t border-brand-border pt-12">
+              <Comments />
+            </footer>
+          </article>
+
+          {/* Right Sidebar - TOC */}
+          <aside className="hidden w-64 shrink-0 lg:block">
+            <div className="sticky top-32">
+              <TableOfContents headings={headings} />
+            </div>
+          </aside>
         </div>
-
-        <footer className="mt-24 border-t border-brand-border pt-12">
-          <Comments />
-        </footer>
-      </article>
+      </div>
 
       {/* Sticky Bottom Nav */}
       {(prevPost || nextPost) && (

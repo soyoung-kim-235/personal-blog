@@ -45,6 +45,11 @@ function BlockEl({
   richText: RichText[];
   text: string;
 }) {
+  const slug = text
+    .toLowerCase()
+    .replace(/[^\w\sㄱ-힣]/g, "")
+    .replace(/\s+/g, "-");
+
   switch (block.type) {
     case "paragraph":
       return (
@@ -55,19 +60,19 @@ function BlockEl({
       );
     case "heading_1":
       return (
-        <h1 className="mt-8 text-2xl font-bold text-neutral-900 dark:text-white">
+        <h1 id={slug} className="mt-12 scroll-mt-24 text-3xl font-bold text-neutral-900 dark:text-white">
           {text}
         </h1>
       );
     case "heading_2":
       return (
-        <h2 className="mt-6 text-xl font-bold text-neutral-900 dark:text-white">
+        <h2 id={slug} className="mt-10 scroll-mt-24 text-2xl font-bold text-neutral-900 dark:text-white">
           {text}
         </h2>
       );
     case "heading_3":
       return (
-        <h3 className="mt-4 text-lg font-semibold text-neutral-900 dark:text-white">
+        <h3 id={slug} className="mt-8 scroll-mt-24 text-xl font-semibold text-neutral-900 dark:text-white">
           {text}
         </h3>
       );
