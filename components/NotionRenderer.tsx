@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import ZoomImage from "./ZoomImage";
 import type { BlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
 type RichText = { plain_text: string; href?: string | null };
@@ -195,7 +196,7 @@ export default function NotionRenderer({ blocks }: NotionRendererProps) {
           nodes.push(
             <figure key={block.id} className="my-4">
               <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-neutral-100 dark:bg-neutral-800">
-                <Image
+                <ZoomImage
                   src={src}
                   alt={cap || "Image"}
                   fill
