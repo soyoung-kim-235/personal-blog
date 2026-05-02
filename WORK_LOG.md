@@ -17,6 +17,10 @@
 - **Notion 로깅 추가**: 서버 사이드에서 Notion 데이터 조회 수와 파싱 상태를 확인할 수 있는 상세 로그 추가.
 - **DB 스키마 단순화 대응**: `Content` 속성 의존성 제거 및 `lib/types.ts`에서 불필요한 필드 정리.
 
+### 4. 🤖 자동화 (Automation)
+- **CMS 자동 업데이트**: `Status=Public` 시 본문을 분석하여 `Slug`와 `Tags`를 자동으로 생성하고 Notion DB에 반영하는 파이프라인 구축.
+- **빌드 프로세스 통합**: Vercel 배포 시 자동으로 DB 최신화 스크립트(`npm run automate`) 실행 설정.
+
 ---
 
 ## 🏃 진행 중인 작업 (Backlog)

@@ -220,3 +220,17 @@ export async function getPageIdBySlug(slug: string): Promise<string | null> {
   const post = await getPostBySlug(slug);
   return post?.id ?? null;
 }
+
+/**
+ * Notion 페이지 속성 업데이트 (자동화용)
+ */
+export async function updatePageProperties(
+  pageId: string,
+  properties: Record<string, any>
+) {
+  const notion = getClient();
+  return await notion.pages.update({
+    page_id: pageId,
+    properties: properties,
+  });
+}
