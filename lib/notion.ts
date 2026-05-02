@@ -101,8 +101,22 @@ function parsePageToPost(page: PageObjectResponse): Post {
   };
 }
 
-
-
+/**
+ * ID로 단일 포스트 강제 조회 (Public, Private 무관)
+ */
+export async function getPostById(pageId: string): Promise<Post | null> {
+  const notion = getClient();
+  try {
+    const response = await notion.pages.retrieve({ page_id: pageId });
+    if ("properties" in response) {
+      return parsePageToPost(response as PageObjectResponse);
+    }
+    return null;
+  } catch (err) {
+    console.error(`Error fetching page ${pageId}:`, err);
+    return null;
+  }
+}
 /**
  * Public 글 전체 조회 (최신순)
  */

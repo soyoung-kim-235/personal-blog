@@ -1,4 +1,4 @@
-import { getPosts, getPostBlocks, updatePageProperties } from "@/lib/notion";
+import { getPosts, getPostById, getPostBlocks, updatePageProperties } from "@/lib/notion";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 interface AnalysisResult {
@@ -71,11 +71,10 @@ ${allText.slice(0, 20000)} // 긴 글은 앞부분 위주로 분석
  * 단일 포스트 처리 (Webhook 연동용)
  */
 export async function processSinglePost(pageId: string) {
-  const posts = await getPosts();
-  const post = posts.find(p => p.id === pageId);
+  const post = await getPostById(pageId);
   
-  if (!post || post.status !== "Public") {
-    console.log(`⚠️ [Webhook] 페이지를 찾을 수 없거나 Public이 아닙니다. (ID: ${pageId})`);
+  if (!post) {
+    console.log(`⚠️ [Webhook] 페이지를 찾을 수 없습니다. (ID: ${pageId})`);
     return false;
   }
 
@@ -127,8 +126,6 @@ export async function runAutomation() {
     let updatedCount = 0;
 
     for (const post of posts) {
-      if (post.status !== "Public") continue;
-      
       const isUpdated = await processSinglePost(post.id);
       if (isUpdated) updatedCount++;
     }
