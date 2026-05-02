@@ -17,7 +17,6 @@ async function analyzePostWithAI(title: string, blocks: any[]): Promise<Analysis
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  // 속도와 비용면에서 우수한 최신 모델 사용
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
   const allText = blocks
@@ -32,7 +31,6 @@ async function analyzePostWithAI(title: string, blocks: any[]): Promise<Analysis
 
   if (!allText.trim()) return null;
 
-  // 프롬프트 작성: AI에게 명확한 역할과 JSON 응답 포맷 요구
   const prompt = `
 당신은 기술 및 기획 블로그의 수석 에디터입니다.
 다음은 "${title}" 이라는 제목의 블로그 글 본문입니다.
@@ -56,7 +54,6 @@ ${allText.slice(0, 20000)} // 긴 글은 앞부분 위주로 분석
     const result = await model.generateContent(prompt);
     const response = result.response.text();
     
-    // JSON 파싱 (AI가 마크다운 코드 블록으로 감싸서 줄 경우를 대비)
     const cleaned = response.replace(/```json/gi, "").replace(/```/g, "").trim();
     const parsed = JSON.parse(cleaned);
     
@@ -71,7 +68,51 @@ ${allText.slice(0, 20000)} // 긴 글은 앞부분 위주로 분석
 }
 
 /**
- * 메인 자동화 함수
+ * 단일 포스트 처리 (Webhook 연동용)
+ */
+export async function processSinglePost(pageId: string) {
+  const posts = await getPosts();
+  const post = posts.find(p => p.id === pageId);
+  
+  if (!post || post.status !== "Public") {
+    console.log(`⚠️ [Webhook] 페이지를 찾을 수 없거나 Public이 아닙니다. (ID: ${pageId})`);
+    return false;
+  }
+
+  const updates: any = {};
+  const hasNoTags = !post.tags || post.tags.length === 0;
+  const hasNoDescription = !post.description;
+
+  if (hasNoTags || hasNoDescription) {
+    console.log(`📝 [${post.title}] Gemini가 문맥을 분석 중입니다...`);
+    const blocks = await getPostBlocks(post.id);
+    const aiResult = await analyzePostWithAI(post.title, blocks);
+    
+    if (aiResult) {
+      if (hasNoTags && aiResult.tags.length > 0) {
+        updates["Tags"] = {
+          multi_select: aiResult.tags.map(tag => ({ name: tag }))
+        };
+      }
+      if (hasNoDescription && aiResult.description) {
+        updates["Description"] = {
+          rich_text: [{ text: { content: aiResult.description } }]
+        };
+      }
+    }
+  }
+
+  if (Object.keys(updates).length > 0) {
+    console.log(`✨ [${post.title}] 분석 완료! Notion DB에 적용합니다:`, Object.keys(updates));
+    await updatePageProperties(post.id, updates);
+    return true; // 업데이트 발생
+  }
+  
+  return false; // 변경사항 없음
+}
+
+/**
+ * 전체 메인 자동화 함수 (빌드 또는 수동 실행용)
  */
 export async function runAutomation() {
   console.log("🚀 Gemini 기반 Notion CMS 자동화 작업을 시작합니다...");
@@ -86,39 +127,10 @@ export async function runAutomation() {
     let updatedCount = 0;
 
     for (const post of posts) {
-      const updates: any = {};
-
-      // Tags나 Description이 비어있는 경우만 AI 동작
-      const hasNoTags = !post.tags || post.tags.length === 0;
-      const hasNoDescription = !post.description;
+      if (post.status !== "Public") continue;
       
-      if (hasNoTags || hasNoDescription) {
-        console.log(`📝 [${post.title}] Gemini가 문맥을 분석 중입니다...`);
-        const blocks = await getPostBlocks(post.id);
-        
-        const aiResult = await analyzePostWithAI(post.title, blocks);
-        
-        if (aiResult) {
-          if (hasNoTags && aiResult.tags.length > 0) {
-            updates["Tags"] = {
-              multi_select: aiResult.tags.map(tag => ({ name: tag }))
-            };
-          }
-
-          if (hasNoDescription && aiResult.description) {
-            updates["Description"] = {
-              rich_text: [{ text: { content: aiResult.description } }]
-            };
-          }
-        }
-      }
-
-      // 변경사항이 있다면 Notion DB에 쓰기
-      if (Object.keys(updates).length > 0) {
-        console.log(`✨ [${post.title}] 분석 완료! Notion DB에 적용합니다:`, Object.keys(updates));
-        await updatePageProperties(post.id, updates);
-        updatedCount++;
-      }
+      const isUpdated = await processSinglePost(post.id);
+      if (isUpdated) updatedCount++;
     }
 
     console.log(`🎉 자동화 완료! 총 ${updatedCount}개의 포스트가 Gemini를 통해 똑똑해졌습니다.`);
