@@ -32,15 +32,27 @@ export async function POST(req: Request) {
     // 2. 페이로드 파싱
     const payload = JSON.parse(bodyText);
     
+    // [중요] 노션 웹훅 구독 인증(Verification) 처리
+    // 노션에서 웹훅 URL을 처음 등록할 때 verification_token을 보냅니다.
+    if (payload.verification_token) {
+      console.log("==========================================");
+      console.log("🔔 노션 웹훅 인증 토큰이 도착했습니다!");
+      console.log(`🔑 토큰: ${payload.verification_token}`);
+      console.log("==========================================");
+      
+      // 토큰을 그대로 응답해줍니다. (노션 UI에 직접 입력해야 할 수도 있음)
+      return NextResponse.json({ 
+        verification_token: payload.verification_token 
+      });
+    }
+
     // 노션 웹훅은 data.id (혹은 source.id 등 버전에 따라 다름)를 통해 페이지 ID를 전달합니다.
-    // 현재 노션 웹훅의 page.updated 이벤트 페이로드 기준
     const eventType = payload?.type;
     let pageId = null;
 
     if (eventType?.startsWith("page.")) {
       pageId = payload?.data?.id;
     } else {
-      // 페이지 이벤트가 아닌 경우 무시
       return NextResponse.json({ status: "ignored", reason: "not a page event" });
     }
 
@@ -55,8 +67,6 @@ export async function POST(req: Request) {
     if (isUpdated) {
       revalidatePath("/");
       revalidatePath("/posts");
-      // 필요하다면 개별 포스트 페이지도 초기화
-      // revalidatePath(`/posts/${slug}`); (현재 ID만 알기 때문에 전체 목록을 갱신합니다)
     }
 
     return NextResponse.json({ 
