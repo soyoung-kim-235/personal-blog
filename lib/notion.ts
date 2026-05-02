@@ -102,6 +102,21 @@ function parsePageToPost(page: PageObjectResponse): Post {
 }
 
 /**
+ * 페이지에 코멘트(댓글) 추가
+ */
+export async function addCommentToPage(pageId: string, text: string) {
+  const notion = getClient();
+  try {
+    await notion.comments.create({
+      parent: { page_id: pageId },
+      rich_text: [{ text: { content: text } }],
+    });
+  } catch (error) {
+    console.error(`Error adding comment to page ${pageId}:`, error);
+  }
+}
+
+/**
  * ID로 단일 포스트 강제 조회 (Public, Private 무관)
  */
 export async function getPostById(pageId: string): Promise<Post | null> {
