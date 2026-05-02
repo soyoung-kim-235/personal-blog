@@ -4,7 +4,11 @@ import {
   getPostBySlug,
   getPostBlocks,
   getPosts,
+  getRelatedPosts,
 } from "@/lib/notion";
+import FloatingSidebar from "@/components/FloatingSidebar";
+import RelatedPosts from "@/components/RelatedPosts";
+import Image from "next/image";
 import { formatDate } from "@/lib/utils";
 import NotionRenderer from "@/components/NotionRenderer";
 import Comments from "@/components/Comments";
@@ -55,10 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-import FloatingSidebar from "@/components/FloatingSidebar";
-import RelatedPosts from "@/components/RelatedPosts";
-import Image from "next/image";
-import { getPostBySlug, getPostBlocks, getPosts, getRelatedPosts } from "@/lib/notion";
+
 
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
