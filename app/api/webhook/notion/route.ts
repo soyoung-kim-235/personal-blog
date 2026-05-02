@@ -8,9 +8,13 @@ import crypto from "crypto";
 const NOTION_WEBHOOK_SECRET = process.env.NOTION_WEBHOOK_SECRET;
 
 async function handleRequest(req: Request) {
+  console.log(`[Webhook] Received request: ${req.method} ${req.url}`);
+  
   try {
     const signature = req.headers.get("x-notion-signature");
     const bodyText = await req.text(); // raw body for signature verification
+    
+    console.log(`[Webhook] Body (first 500 chars):`, bodyText.substring(0, 500));
 
     // 1. Signature 검증 (시크릿 키가 설정된 경우에만 수행)
     if (NOTION_WEBHOOK_SECRET && signature) {
@@ -24,6 +28,7 @@ async function handleRequest(req: Request) {
       );
 
       if (!isValid) {
+        console.warn("[Webhook] Invalid signature rejected.");
         return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
       }
     }
