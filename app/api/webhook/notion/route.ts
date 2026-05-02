@@ -28,8 +28,22 @@ async function handleRequest(req: Request) {
       }
     }
 
-    // 2. 페이로드 파싱
-    const payload = JSON.parse(bodyText);
+    // 2. 페이로드 파싱 (GET 등 body가 없는 경우 처리)
+    let payload: any = {};
+    if (bodyText) {
+      try {
+        payload = JSON.parse(bodyText);
+      } catch (e) {
+        console.warn("JSON parse error:", e);
+      }
+    } else {
+      // GET 요청의 경우 URL Query Parameter에 token이 있을 수 있습니다.
+      const url = new URL(req.url);
+      const token = url.searchParams.get("verification_token") || url.searchParams.get("challenge");
+      if (token) {
+        payload.verification_token = token;
+      }
+    }
     
     // [중요] 노션 웹훅 구독 인증(Verification) 처리
     if (payload.verification_token) {
@@ -80,20 +94,18 @@ async function handleRequest(req: Request) {
   }
 }
 
-export async function POST(req: Request) {
-  return handleRequest(req);
-}
-
-export async function PUT(req: Request) {
-  return handleRequest(req);
-}
+export async function POST(req: Request) { return handleRequest(req); }
+export async function PUT(req: Request) { return handleRequest(req); }
+export async function GET(req: Request) { return handleRequest(req); }
+export async function PATCH(req: Request) { return handleRequest(req); }
+export async function DELETE(req: Request) { return handleRequest(req); }
 
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, Authorization, x-notion-signature",
     },
   });
