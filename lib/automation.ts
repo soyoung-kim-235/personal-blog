@@ -1,4 +1,4 @@
-import { getPosts, getPostBlocks, updatePageProperties } from "./notion";
+import { getPosts, getPostBlocks, updatePageProperties } from "@/lib/notion";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 interface AnalysisResult {

@@ -1,5 +1,5 @@
 import { Post } from "@/lib/types";
-import PostCard from "./PostCard";
+import PostCard from "@/components/PostCard";
 
 interface RelatedPostsProps {
   posts: Post[];

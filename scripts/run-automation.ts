@@ -1,4 +1,4 @@
-import { runAutomation } from "../lib/automation";
+import { runAutomation } from "@/lib/automation";
 import * as dotenv from "dotenv";
 import * as path from "path";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import ZoomImage from "./ZoomImage";
+import ZoomImage from "@/components/ZoomImage";
 import type { BlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
 type RichText = { plain_text: string; href?: string | null };
