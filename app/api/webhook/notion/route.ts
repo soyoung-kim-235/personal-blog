@@ -66,8 +66,8 @@ async function handleRequest(req: Request) {
     let pageId = null;
 
     if (eventType?.startsWith("page.")) {
-      // Notion webhook payload structure varies slightly, but the ID is usually in data.id or data.object.id
-      pageId = payload?.data?.id || payload?.data?.object?.id || payload?.data?.page?.id;
+      // Notion webhook payload structure varies, but the ID is usually in payload.entity.id (latest API) or data.id
+      pageId = payload?.entity?.id || payload?.data?.id || payload?.data?.object?.id || payload?.data?.page?.id;
     } else if (eventType === "comment.created") {
       // 코멘트 이벤트는 무시
       return NextResponse.json({ status: "ignored", reason: "comment event" });
